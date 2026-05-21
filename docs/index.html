@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de Cashback - Dashboard</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #162033;
+      --muted: #667085;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --green: #16a34a;
+      --amber: #d97706;
+      --red: #dc2626;
+      --border: #e5e7eb;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0f172a, #1e40af);
+      color: white;
+      border-radius: 30px;
+      padding: 34px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1.4fr 0.8fr;
+      gap: 24px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: 34px;
+      margin: 0 0 10px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: rgba(255,255,255,0.76);
+      line-height: 1.5;
+    }
+
+    .api-box {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .api-box label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 8px;
+      color: rgba(255,255,255,0.78);
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 13px;
+      font-size: 14px;
+      outline: none;
+      background: white;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.14);
+    }
+
+    .api-box input {
+      border: none;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .card-value {
+      font-size: 27px;
+      font-weight: 800;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      background: #eef2ff;
+      color: #3730a3;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      margin: 0 0 4px;
+    }
+
+    .section-subtitle {
+      color: var(--muted);
+      margin: 0 0 18px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 15px;
+      padding: 13px 16px;
+      background: var(--primary);
+      color: white;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.18s;
+      width: 100%;
+      font-size: 14px;
+    }
+
+    .btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn.secondary {
+      background: #111827;
+    }
+
+    .btn.green {
+      background: var(--green);
+    }
+
+    .btn.amber {
+      background: var(--amber);
+    }
+
+    .btn.red {
+      background: var(--red);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .result {
+      margin-top: 16px;
+      background: #0b1220;
+      color: #d1e7ff;
+      border-radius: 18px;
+      padding: 16px;
+      min-height: 98px;
+      font-family: Consolas, monospace;
+      white-space: pre-wrap;
+      overflow: auto;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .history {
+      max-height: 410px;
+      overflow: auto;
+      display: grid;
+      gap: 10px;
+    }
+
+    .history-item {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      background: #fff;
+    }
+
+    .history-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .history-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      height: fit-content;
+      white-space: nowrap;
+    }
+
+    .DISPONIVEL { background: #dcfce7; color: #166534; }
+    .PENDENTE { background: #fef3c7; color: #92400e; }
+    .USADO { background: #e0e7ff; color: #3730a3; }
+    .CANCELADO { background: #fee2e2; color: #991b1b; }
+    .EXPIRADO { background: #f3f4f6; color: #374151; }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin: 0 0 18px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      padding: 13px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 800;
+      box-shadow: var(--shadow);
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .rule-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .rule-box ul {
+      margin: 10px 0 0 18px;
+      padding: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 880px;
+    }
+
+    th, td {
+      padding: 13px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    th {
+      background: #f8fafc;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .footer {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .hero, .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cards {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .app {
+        padding: 16px;
+      }
+
+      .cards, .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div>
+        <div class="tag">💳 Sistema de Cashback</div>
+        <h1>Dashboard de Demonstração</h1>
+        <p>
+          Tela visual para apresentar ao cliente o funcionamento do cashback:
+          geração de saldo, consulta da carteira, liberação, uso como desconto e histórico.
+        </p>
+      </div>
+
+      <div class="api-box">
+        <label>URL da API</label>
+        <input id="apiBase" value="http://localhost:8080" />
+      </div>
+    </section>
+
+    <div class="tabs">
+      <button class="tab-btn active" id="tabManualBtn" onclick="abrirAba('manual')">Cashback manual</button>
+      <button class="tab-btn" id="tabAutomaticoBtn" onclick="abrirAba('automatico')">Cashback automático</button>
+    </div>
+
+    <div id="abaManual" class="tab-content active">
+
+    <section class="cards">
+      <div class="card">
+        <div class="card-title">Saldo disponível</div>
+        <div class="card-value" id="saldoDisponivel">R$ 0,00</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Saldo pendente</div>
+        <div class="card-value" id="saldoPendente">R$ 0,00</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Saldo utilizado</div>
+        <div class="card-value" id="saldoUtilizado">R$ 0,00</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Saldo expirado</div>
+        <div class="card-value" id="saldoExpirado">R$ 0,00</div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2 class="section-title">Simular cashback</h2>
+        <p class="section-subtitle">
+          Preencha os dados do pedido para gerar cashback ao cliente.
+        </p>
+
+        <div class="form-grid">
+          <div class="field">
+            <label>Cliente ID</label>
+            <input id="clienteId" value="CLI-001" />
+          </div>
+
+          <div class="field">
+            <label>Pedido ID</label>
+            <input id="pedidoId" value="PED-1001" />
+          </div>
+
+          <div class="field">
+            <label>Valor do pedido</label>
+            <input id="valorPedido" type="number" value="300" />
+          </div>
+
+          <div class="field">
+            <label>Valor pago em dinheiro</label>
+            <input id="valorPagoEmDinheiro" type="number" value="300" />
+          </div>
+
+          <div class="field full">
+            <label>Percentual de cashback</label>
+            <input id="percentualCashback" type="number" value="5" />
+          </div>
+        </div>
+
+        <button class="btn" onclick="gerarCashback()">Gerar cashback</button>
+
+        <div class="actions">
+          <button class="btn green" onclick="consultarSaldo()">Consultar saldo</button>
+          <button class="btn amber" onclick="liberarPendentes()">Liberar pendentes</button>
+          <button class="btn secondary" onclick="buscarHistorico(true)">Ver histórico</button>
+        </div>
+
+        <button class="btn red" style="margin-top: 10px;" onclick="limparCampos()">Limpar campos</button>
+
+        <div class="result" id="resultado" style="display:none;"></div>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Usar cashback</h2>
+        <p class="section-subtitle">
+          Simule uma nova compra usando o saldo disponível como desconto.
+        </p>
+
+        <div class="form-grid">
+          <div class="field">
+            <label>Cliente ID</label>
+            <input id="usarClienteId" value="CLI-001" />
+          </div>
+
+          <div class="field">
+            <label>Novo Pedido ID</label>
+            <input id="usarPedidoId" value="PED-2001" />
+          </div>
+
+          <div class="field">
+            <label>Valor da nova compra</label>
+            <input id="usarValorPedido" type="number" value="200" />
+          </div>
+
+          <div class="field">
+            <label>Limite máximo de uso (%)</label>
+            <input id="percentualMaximoUso" type="number" value="30" />
+          </div>
+        </div>
+
+        <button class="btn green" onclick="usarCashback()">Aplicar cashback</button>
+
+        <div class="actions">
+          <button class="btn red" onclick="cancelarCashback()">Cancelar pedido</button>
+          <button class="btn amber" onclick="expirarCashbacks()">Expirar saldos</button>
+          <button class="btn secondary" onclick="limparCampos()">Limpar campos</button>
+        </div>
+
+        <div class="result" id="resultadoUso" style="display:none;"></div>
+      </div>
+    </section>
+
+    <section class="card" id="secaoHistorico" style="margin-top: 18px;">
+      <h2 class="section-title">Histórico de movimentações</h2>
+      <p class="section-subtitle">
+        Extrato visual com créditos, débitos e status das movimentações do cliente.
+      </p>
+
+      <div class="history" id="historico">
+        <div class="history-item">
+          <div>
+            <strong>Nenhum histórico carregado</strong>
+            <span>Clique em “Ver histórico” para consultar as movimentações.</span>
+          </div>
+          <div class="pill PENDENTE">AGUARDANDO</div>
+        </div>
+      </div>
+    </section>
+
+    </div>
+
+    <div id="abaAutomatico" class="tab-content">
+      <section class="card">
+        <h2 class="section-title">Cashback automático por regra</h2>
+        <p class="section-subtitle">
+          Esta aba identifica clientes elegíveis e calcula cashback automaticamente com base em regras comerciais.
+        </p>
+
+        <div class="rule-box">
+          <strong>Regra configurada</strong>
+          <ul>
+            <li>Pedido precisa estar pago dentro do prazo.</li>
+            <li>Cliente precisa ter feito o último pedido há menos de 15 dias.</li>
+            <li>O sistema calcula o cashback sobre o valor do pedido elegível.</li>
+          </ul>
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label>Percentual de cashback automático</label>
+            <input id="autoPercentualCashback" type="number" value="5" />
+          </div>
+
+          <div class="field">
+            <label>Limite do último pedido em dias</label>
+            <input id="autoDiasUltimoPedido" type="number" value="15" />
+          </div>
+
+          <div class="field">
+            <label>Data de referência</label>
+            <input id="autoDataReferencia" type="date" />
+          </div>
+
+          <div class="field">
+            <label>Status mínimo</label>
+            <select id="autoStatusMinimo">
+              <option value="PAGO">Pedido pago</option>
+              <option value="FATURADO">Pedido faturado</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" onclick="simularCashbackAutomatico()">Simular elegíveis</button>
+          <button class="btn green" onclick="processarCashbackAutomatico()">Gerar cashback automático</button>
+          <button class="btn red" onclick="limparCashbackAutomatico()">Limpar aba</button>
+        </div>
+      </section>
+
+      <section class="cards" style="margin-top: 18px;">
+        <div class="card">
+          <div class="card-title">Clientes analisados</div>
+          <div class="card-value" id="autoClientesAnalisados">0</div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Elegíveis</div>
+          <div class="card-value" id="autoElegiveis">0</div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Cashback estimado</div>
+          <div class="card-value" id="autoCashbackEstimado">R$ 0,00</div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Status</div>
+          <div class="card-value" id="autoStatusProcesso" style="font-size: 19px;">Aguardando</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Clientes elegíveis</h2>
+        <p class="section-subtitle">Lista de pedidos avaliados pela regra automática.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Pedido</th>
+                <th>Valor</th>
+                <th>Pago no prazo</th>
+                <th>Último pedido</th>
+                <th>Status</th>
+                <th>Cashback</th>
+              </tr>
+            </thead>
+            <tbody id="autoTabela">
+              <tr>
+                <td colspan="7">Clique em “Simular elegíveis” para carregar os clientes.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer">
+      Demonstração visual conectada à API local de cashback.
+    </div>
+  </main>
+
+  <script>
+    const brl = new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL"
+    });
+
+    function apiBase() {
+      return document.getElementById("apiBase").value.replace(/\/$/, "");
+    }
+
+    function numberValue(id) {
+      return Number(document.getElementById(id).value || 0);
+    }
+
+    function textValue(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function print(id, data) {
+      const elemento = document.getElementById(id);
+      if (!elemento) return;
+
+      elemento.textContent =
+        typeof data === "string" ? data : JSON.stringify(data, null, 2);
+    }
+
+    function formatMoney(value) {
+      return brl.format(Number(value || 0));
+    }
+
+    async function request(path, options = {}) {
+      const response = await fetch(apiBase() + path, {
+        headers: {
+          "Content-Type": "application/json"
+        },
+        ...options
+      });
+
+      const text = await response.text();
+      let data = text;
+
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch (error) {}
+
+      if (!response.ok) {
+        throw new Error(JSON.stringify(data, null, 2));
+      }
+
+      return data;
+    }
+
+    async function gerarCashback() {
+      try {
+        const body = {
+          clienteId: textValue("clienteId"),
+          pedidoId: textValue("pedidoId"),
+          valorPedido: numberValue("valorPedido"),
+          valorPagoEmDinheiro: numberValue("valorPagoEmDinheiro"),
+          percentualCashback: numberValue("percentualCashback")
+        };
+
+        const data = await request("/api/cashback/gerar", {
+          method: "POST",
+          body: JSON.stringify(body)
+        });
+
+        print("resultado", data);
+        await consultarSaldo();
+        await buscarHistorico(false);
+      } catch (error) {
+        print("resultado", "Erro ao gerar cashback:\n" + error.message);
+      }
+    }
+
+    async function consultarSaldo() {
+      try {
+        const clienteId = textValue("clienteId") || textValue("usarClienteId");
+        const data = await request(`/api/cashback/saldo/${clienteId}`);
+
+        document.getElementById("saldoDisponivel").textContent = formatMoney(data.saldoDisponivel);
+        document.getElementById("saldoPendente").textContent = formatMoney(data.saldoPendente);
+        document.getElementById("saldoUtilizado").textContent = formatMoney(data.saldoUtilizado);
+        document.getElementById("saldoExpirado").textContent = formatMoney(data.saldoExpirado);
+
+        print("resultado", data);
+      } catch (error) {
+        print("resultado", "Erro ao consultar saldo:\n" + error.message);
+      }
+    }
+
+    async function liberarPendentes() {
+      try {
+        await request("/api/cashback/liberar-pendentes", {
+          method: "POST"
+        });
+
+        print("resultado", "Cashbacks pendentes processados com sucesso.");
+        await consultarSaldo();
+        await buscarHistorico(false);
+      } catch (error) {
+        print("resultado", "Erro ao liberar pendentes:\n" + error.message);
+      }
+    }
+
+    async function expirarCashbacks() {
+      try {
+        await request("/api/cashback/expirar", {
+          method: "POST"
+        });
+
+        print("resultadoUso", "Rotina de expiração executada com sucesso.");
+        await consultarSaldo();
+        await buscarHistorico(false);
+      } catch (error) {
+        print("resultadoUso", "Erro ao expirar cashbacks:\n" + error.message);
+      }
+    }
+
+    async function usarCashback() {
+      try {
+        const body = {
+          clienteId: textValue("usarClienteId"),
+          pedidoId: textValue("usarPedidoId"),
+          valorPedido: numberValue("usarValorPedido"),
+          percentualMaximoUso: numberValue("percentualMaximoUso")
+        };
+
+        const data = await request("/api/cashback/usar", {
+          method: "POST",
+          body: JSON.stringify(body)
+        });
+
+        print("resultadoUso", data);
+        document.getElementById("clienteId").value = textValue("usarClienteId");
+        await consultarSaldo();
+        await buscarHistorico(false);
+      } catch (error) {
+        print("resultadoUso", "Erro ao usar cashback:\n" + error.message);
+      }
+    }
+
+    async function cancelarCashback() {
+      try {
+        const pedidoId = textValue("pedidoId");
+        await request(`/api/cashback/cancelar/${pedidoId}`, {
+          method: "POST"
+        });
+
+        print("resultadoUso", `Cashback do pedido ${pedidoId} cancelado com sucesso.`);
+        await consultarSaldo();
+        await buscarHistorico(false);
+      } catch (error) {
+        print("resultadoUso", "Erro ao cancelar cashback:\n" + error.message);
+      }
+    }
+
+    async function buscarHistorico(rolarAteHistorico = false) {
+      try {
+        const clienteId = textValue("clienteId") || "CLI-001";
+        const data = await request(`/api/cashback/historico/${clienteId}`);
+
+        const historico = document.getElementById("historico");
+        historico.innerHTML = "";
+
+        if (!Array.isArray(data) || data.length === 0) {
+          historico.innerHTML = `
+            <div class="history-item">
+              <div>
+                <strong>Nenhuma movimentação encontrada</strong>
+                <span>Gere um cashback para visualizar o extrato.</span>
+              </div>
+              <div class="pill PENDENTE">VAZIO</div>
+            </div>
+          `;
+
+          if (rolarAteHistorico) {
+            document.getElementById("secaoHistorico").scrollIntoView({
+              behavior: "smooth",
+              block: "start"
+            });
+          }
+
+          return;
+        }
+
+        data.forEach(item => {
+          const status = item.status || "PENDENTE";
+          const div = document.createElement("div");
+          div.className = "history-item";
+          div.innerHTML = `
+            <div>
+              <strong>${item.tipo || "MOVIMENTO"} - ${formatMoney(item.valorCashback)}</strong>
+              <span>Pedido: ${item.pedidoId || "-"} • Cliente: ${item.clienteId || "-"}</span>
+              <span>${item.descricao || "Sem descrição"}</span>
+            </div>
+            <div class="pill ${status}">${status}</div>
+          `;
+          historico.appendChild(div);
+        });
+
+        if (rolarAteHistorico) {
+          document.getElementById("secaoHistorico").scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        }
+      } catch (error) {
+        document.getElementById("historico").innerHTML = `
+          <div class="history-item">
+            <div>
+              <strong>Erro ao buscar histórico</strong>
+              <span>${error.message}</span>
+            </div>
+            <div class="pill CANCELADO">ERRO</div>
+          </div>
+        `;
+      }
+    }
+
+
+    function abrirAba(nome) {
+      const manual = document.getElementById("abaManual");
+      const automatico = document.getElementById("abaAutomatico");
+      const manualBtn = document.getElementById("tabManualBtn");
+      const automaticoBtn = document.getElementById("tabAutomaticoBtn");
+
+      if (nome === "manual") {
+        manual.classList.add("active");
+        automatico.classList.remove("active");
+        manualBtn.classList.add("active");
+        automaticoBtn.classList.remove("active");
+      } else {
+        automatico.classList.add("active");
+        manual.classList.remove("active");
+        automaticoBtn.classList.add("active");
+        manualBtn.classList.remove("active");
+      }
+    }
+
+    function obterPedidosDemoAutomatico() {
+      return [
+        { clienteId: "CLI-001", pedidoId: "PED-3001", valorPedido: 850.00, pagoDentroPrazo: true, diasUltimoPedido: 8, statusPedido: "PAGO" },
+        { clienteId: "CLI-002", pedidoId: "PED-3002", valorPedido: 420.00, pagoDentroPrazo: false, diasUltimoPedido: 6, statusPedido: "PAGO" },
+        { clienteId: "CLI-003", pedidoId: "PED-3003", valorPedido: 1270.00, pagoDentroPrazo: true, diasUltimoPedido: 21, statusPedido: "PAGO" },
+        { clienteId: "CLI-004", pedidoId: "PED-3004", valorPedido: 690.00, pagoDentroPrazo: true, diasUltimoPedido: 3, statusPedido: "PAGO" }
+      ];
+    }
+
+    function calcularElegibilidadeAutomatica(pedidos) {
+      const percentual = numberValue("autoPercentualCashback");
+      const limiteDias = numberValue("autoDiasUltimoPedido");
+
+      return pedidos.map(item => {
+        const elegivel = item.pagoDentroPrazo === true && Number(item.diasUltimoPedido) < limiteDias;
+        const valorCashback = elegivel ? Number(((Number(item.valorPedido || 0) * percentual) / 100).toFixed(2)) : 0;
+        return { ...item, elegivel, valorCashback };
+      });
+    }
+
+    function renderizarTabelaAutomatica(pedidos) {
+      const tabela = document.getElementById("autoTabela");
+      tabela.innerHTML = "";
+
+      if (!pedidos || pedidos.length === 0) {
+        tabela.innerHTML = `<tr><td colspan="7">Nenhum pedido encontrado para análise.</td></tr>`;
+        return;
+      }
+
+      let elegiveis = 0;
+      let cashbackTotal = 0;
+
+      pedidos.forEach(item => {
+        if (item.elegivel) {
+          elegiveis++;
+          cashbackTotal += Number(item.valorCashback || 0);
+        }
+
+        const status = item.elegivel ? "DISPONIVEL" : "CANCELADO";
+        const textoStatus = item.elegivel ? "Elegível" : "Não elegível";
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${item.clienteId || "-"}</td>
+          <td>${item.pedidoId || item.numeroPedido || "-"}</td>
+          <td>${formatMoney(item.valorPedido)}</td>
+          <td>${item.pagoDentroPrazo ? "Sim" : "Não"}</td>
+          <td>${item.diasUltimoPedido ?? "-"} dias</td>
+          <td><span class="pill ${status}">${textoStatus}</span></td>
+          <td>${formatMoney(item.valorCashback)}</td>
+        `;
+        tabela.appendChild(tr);
+      });
+
+      document.getElementById("autoClientesAnalisados").textContent = pedidos.length;
+      document.getElementById("autoElegiveis").textContent = elegiveis;
+      document.getElementById("autoCashbackEstimado").textContent = formatMoney(cashbackTotal);
+    }
+
+    async function simularCashbackAutomatico() {
+      try {
+        document.getElementById("autoStatusProcesso").textContent = "Consultando";
+
+        const percentual = numberValue("autoPercentualCashback");
+        const dias = numberValue("autoDiasUltimoPedido");
+
+        let dados;
+
+        try {
+          dados = await request(`/api/cashback/automatico/simular?percentualCashback=${percentual}&diasUltimoPedido=${dias}`);
+        } catch (apiError) {
+          dados = obterPedidosDemoAutomatico();
+          document.getElementById("autoStatusProcesso").textContent = "Modo demo";
+        }
+
+        const pedidos = Array.isArray(dados) ? dados : (dados.pedidos || []);
+        const calculados = calcularElegibilidadeAutomatica(pedidos);
+        renderizarTabelaAutomatica(calculados);
+
+        if (document.getElementById("autoStatusProcesso").textContent !== "Modo demo") {
+          document.getElementById("autoStatusProcesso").textContent = "Simulado";
+        }
+      } catch (error) {
+        document.getElementById("autoStatusProcesso").textContent = "Erro";
+        alert("Erro ao simular cashback automático: " + error.message);
+      }
+    }
+
+    async function processarCashbackAutomatico() {
+      try {
+        document.getElementById("autoStatusProcesso").textContent = "Processando";
+
+        const body = {
+          percentualCashback: numberValue("autoPercentualCashback"),
+          diasUltimoPedido: numberValue("autoDiasUltimoPedido"),
+          dataReferencia: textValue("autoDataReferencia"),
+          statusMinimo: textValue("autoStatusMinimo")
+        };
+
+        try {
+          await request("/api/cashback/automatico/processar", {
+            method: "POST",
+            body: JSON.stringify(body)
+          });
+          document.getElementById("autoStatusProcesso").textContent = "Processado";
+          alert("Cashback automático processado com sucesso.");
+          await simularCashbackAutomatico();
+        } catch (apiError) {
+          const demo = calcularElegibilidadeAutomatica(obterPedidosDemoAutomatico());
+          renderizarTabelaAutomatica(demo);
+          document.getElementById("autoStatusProcesso").textContent = "Demo aplicado";
+          alert("Endpoint automático ainda não está ativo. A tela exibiu uma simulação para apresentação.");
+        }
+      } catch (error) {
+        document.getElementById("autoStatusProcesso").textContent = "Erro";
+        alert("Erro ao processar cashback automático: " + error.message);
+      }
+    }
+
+    function limparCashbackAutomatico() {
+      document.getElementById("autoPercentualCashback").value = "5";
+      document.getElementById("autoDiasUltimoPedido").value = "15";
+      document.getElementById("autoDataReferencia").value = "";
+      document.getElementById("autoStatusMinimo").value = "PAGO";
+      document.getElementById("autoClientesAnalisados").textContent = "0";
+      document.getElementById("autoElegiveis").textContent = "0";
+      document.getElementById("autoCashbackEstimado").textContent = "R$ 0,00";
+      document.getElementById("autoStatusProcesso").textContent = "Aguardando";
+      document.getElementById("autoTabela").innerHTML = `<tr><td colspan="7">Clique em “Simular elegíveis” para carregar os clientes.</td></tr>`;
+    }
+
+
+    function limparCampos() {
+      const campos = [
+        "clienteId",
+        "pedidoId",
+        "valorPedido",
+        "valorPagoEmDinheiro",
+        "percentualCashback",
+        "usarClienteId",
+        "usarPedidoId",
+        "usarValorPedido",
+        "percentualMaximoUso"
+      ];
+
+      campos.forEach(id => {
+        const campo = document.getElementById(id);
+        if (campo) {
+          campo.value = "";
+        }
+      });
+
+      document.getElementById("saldoDisponivel").textContent = "R$ 0,00";
+      document.getElementById("saldoPendente").textContent = "R$ 0,00";
+      document.getElementById("saldoUtilizado").textContent = "R$ 0,00";
+      document.getElementById("saldoExpirado").textContent = "R$ 0,00";
+
+      document.getElementById("historico").innerHTML = `
+        <div class="history-item">
+          <div>
+            <strong>Nenhum histórico carregado</strong>
+            <span>Clique em “Ver histórico” para consultar as movimentações.</span>
+          </div>
+          <div class="pill PENDENTE">AGUARDANDO</div>
+        </div>
+      `;
+
+      limparResultado();
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+    function limparResultado() {
+      print("resultado", "Resultado das operações aparecerá aqui.");
+      print("resultadoUso", "Retorno do uso de cashback aparecerá aqui.");
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      const hoje = new Date().toISOString().slice(0, 10);
+      const campoData = document.getElementById("autoDataReferencia");
+      if (campoData) campoData.value = hoje;
+    });
+  </script>
+</body>
+</html>
