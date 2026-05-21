@@ -404,7 +404,7 @@
 
     <div id="abaManual" class="tab-content active">
 
-    <section class="cards">
+    <section class="cards" id="secaoSaldo">
       <div class="card">
         <div class="card-title">Saldo disponível</div>
         <div class="card-value" id="saldoDisponivel">R$ 0,00</div>
@@ -640,6 +640,16 @@
       currency: "BRL"
     });
 
+    function rolarAteSaldo() {
+      const secaoSaldo = document.getElementById("secaoSaldo");
+      if (secaoSaldo) {
+        secaoSaldo.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+    }
+
     function apiBase() {
       return document.getElementById("apiBase").value.replace(/\/$/, "");
     }
@@ -702,6 +712,7 @@
         });
 
         print("resultado", data);
+        rolarAteSaldo();
         await consultarSaldo();
         await buscarHistorico(false);
       } catch (error) {
@@ -720,6 +731,7 @@
         document.getElementById("saldoExpirado").textContent = formatMoney(data.saldoExpirado);
 
         print("resultado", data);
+        rolarAteSaldo();
       } catch (error) {
         print("resultado", "Erro ao consultar saldo:\n" + error.message);
       }
@@ -732,6 +744,7 @@
         });
 
         print("resultado", "Cashbacks pendentes processados com sucesso.");
+        rolarAteSaldo();
         await consultarSaldo();
         await buscarHistorico(false);
       } catch (error) {
@@ -746,6 +759,7 @@
         });
 
         print("resultadoUso", "Rotina de expiração executada com sucesso.");
+        rolarAteSaldo();
         await consultarSaldo();
         await buscarHistorico(false);
       } catch (error) {
@@ -768,6 +782,7 @@
         });
 
         print("resultadoUso", data);
+        rolarAteSaldo();
         document.getElementById("clienteId").value = textValue("usarClienteId");
         await consultarSaldo();
         await buscarHistorico(false);
@@ -784,6 +799,7 @@
         });
 
         print("resultadoUso", `Cashback do pedido ${pedidoId} cancelado com sucesso.`);
+        rolarAteSaldo();
         await consultarSaldo();
         await buscarHistorico(false);
       } catch (error) {
@@ -1042,10 +1058,7 @@
       `;
 
       limparResultado();
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
+      rolarAteSaldo();
     }
 
     function limparResultado() {
